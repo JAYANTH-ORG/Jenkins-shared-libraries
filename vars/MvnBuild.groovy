@@ -1,5 +1,5 @@
 def call(){
   echo "starting maven build"
-  sh 'mvn clean package -DskipTests'  
+  sh 'cmd /c mvn clean package -DskipTests'  
 }
 
