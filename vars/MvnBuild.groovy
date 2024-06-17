@@ -19,18 +19,20 @@ def call(Operation) {
     echo "Running Maven build with goals: ${mavenGoals}"
     bat "mvn ${mavenGoals} ${params.options ?: ''}"
 
-    if (params.Operation == 'build' || params.Operation == 'deploy') {
-      steps.echo "Deploying artifacts to Artifactory"
-      def server = steps.Artifactory.server 'Artifactory-Server'  // Use the ID configured in Jenkins
-      def buildInfo = steps.Artifactory.newBuildInfo()
-      def rtMaven = steps.Artifactory.newMavenBuild()
-      
-      rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
-      rtMaven.deployer server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
+     def server = Artifactory.server('artifactory') // Replace with your Artifactory server ID
+        def uploadSpec = """{
+            "files": [
+                {
+                    "pattern": "target/*.jar",
+                    "target": "test/"
+                }
+            ]
+        }"""
+        retry(3) {
+            def buildInfo = server.upload spec: uploadSpec
+            server.publishBuildInfo buildInfo
+        }
 
-      rtMaven.run pom: 'pom.xml', goals: 'deploy', buildInfo: buildInfo
-      server.publishBuildInfo buildInfo
-    }
 
     // if (params.Operation == 'build' || params.Operation == 'test') {
     //     steps.echo "Running SonarQube analysis"
