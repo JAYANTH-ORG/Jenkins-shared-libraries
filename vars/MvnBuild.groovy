@@ -18,6 +18,28 @@ def call(Operation) {
   try {
     echo "Running Maven build with goals: ${mavenGoals}"
     bat "mvn ${mavenGoals} ${params.options ?: ''}"
+
+     def server = Artifactory.server('artifactory') // Replace with your Artifactory server ID
+        def uploadSpec = """{
+            "files": [
+                {
+                    "pattern": "target/*.war",
+                    "target": "test/"
+                }
+            ]
+        }"""
+        retry(3) {
+            def buildInfo = server.upload spec: uploadSpec
+            server.publishBuildInfo buildInfo
+        }
+
+
+    // if (params.Operation == 'build' || params.Operation == 'test') {
+    //     steps.echo "Running SonarQube analysis"
+    //     steps.withSonarQubeEnv('SonarQube') {
+    //         steps.sh "mvn sonar:sonar"
+    //     }
+    // }
   } catch (Exception e) {
     echo "Maven build failed: ${e.message}"
     // Add error handling logic here (e.g., send notifications, log to a file)
