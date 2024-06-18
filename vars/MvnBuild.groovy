@@ -9,7 +9,7 @@ def call(Operation) {
   } else if (params.Operation == 'test') {
     mavenGoals = 'clean test'
   } else if (params.Operation == 'deploy') {
-    mavenGoals = 'clean deploy'
+    mavenGoals = 'clean build'
   } else {
     echo "Invalid operation: ${params.Operation}"
     return
