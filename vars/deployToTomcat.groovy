@@ -11,7 +11,8 @@ def call() {
     def tomcatUrl = 'http://localhost:8089/'
     def contextPath = '/home'
     def warPattern = '**/*.war'
-
+    echo "Deploying artifact to tomcat server"
+    
     deploy adapters: [tomcat9(credentialsId: tomcatCredentialsId, path: '', url: tomcatUrl)], 
            contextPath: contextPath, 
            war: warPattern
