@@ -23,7 +23,7 @@ def call(Operation) {
         def uploadSpec = """{
             "files": [
                 {
-                    "pattern": "target/*.jar",
+                    "pattern": "target/*.war",
                     "target": "test/"
                 }
             ]
